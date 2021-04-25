@@ -1,0 +1,40 @@
+http:
+  middlewares:
+    middleware-rate-limit:
+      rateLimit:
+        average: 100
+        burst: 100
+
+    middleware-basic-auth:
+      basicAuth:
+        users:
+          - "admin:$apr1$l6otxm3g$DuIaxaIOPa5Xd4oTflsUu1"
+        realm: "Traefik 2 Basic Auth"
+
+    middleware-secure-headers:
+      headers:
+        accessControlMaxAge: 100
+        accessControlAllowOriginList:
+          - <origin>
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+        forceSTSHeader: true
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        sslRedirect: true
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        customFrameOptionsValue: "SAMEORIGIN"
+        contentTypeNosniff: true
+        browserXssFilter: true
+        # sslForceHost: true # add sslHost to all of the services
+        # sslHost: "example.com"
+        referrerPolicy: "strict-origin-when-cross-origin"
+        # contentSecurityPolicy: "default-src 'self'"
+        customResponseHeaders:
+          Server: ""
+          X-Powered-By: ""
+          Permissions-Policy: 'geolocation=(self), fullscreen=(self), payment=(self)'

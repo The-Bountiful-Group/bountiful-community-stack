@@ -1,0 +1,33 @@
+http:
+  routers:
+    traefik:
+      rule: 'PathPrefix(`/api`) || PathPrefix(`/dashboard`)'
+      priority: 100
+      entryPoints:
+        - https
+      middlewares:
+        - chain-basic-auth@file
+      service: api@internal
+      tls: {}
+
+    nginx:
+      rule: 'Host(`community.bountiful.land`)'
+      entryPoints:
+        - https
+      middlewares:
+        - middleware-redirect-www
+        - chain-no-auth@file
+      service: nginx-svc
+      tls:
+        certResolver: lets-encrypt
+        options: tls-options
+        domains:
+          - main: 'bountiful.land'
+            sans:
+              - '*.bountiful.land'
+
+  services:
+    nginx-svc:
+      loadBalancer:
+        servers:
+          - url: 'http://nginx:80'

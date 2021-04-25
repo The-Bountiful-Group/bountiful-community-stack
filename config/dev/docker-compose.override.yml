@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  traefik:
+    restart: unless-stopped
+    volumes:
+      - ./logs/traefik:/logs
+      - ./config/dev/traefik:/etc/traefik
+  
+  nginx:
+    restart: unless-stopped
+    volumes:
+      - ./config/dev/nginx:/etc/nginx
+      - ./logs/nginx:/var/log/nginx
+
+  php:
+    restart: unless-stopped
+    volumes:
+      - ./config/dev/php:/usr/local/etc/php
+
+  db:
+    restart: unless-stopped

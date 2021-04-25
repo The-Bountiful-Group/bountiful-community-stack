@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:2.4.8
+    restart: always
+    networks:
+      web:
+        ipv4_address: ${TRAEFIK_STATIC_IP}   # Static IP so that php container can resolve its domain to traefik instead of itself (https bug)
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/production/traefik:/etc/traefik
+    # environment:
+    #   - CF_API_EMAIL=$CLOUDFLARE_EMAIL
+    #   - CF_API_KEY=$CLOUDFLARE_API_KEY
+  
+  nginx:
+    container_name: nginx
+    build:
+      context: ./images/nginx/
+      args:
+        ENABLED_MODULES: cachepurge
+    restart: always
+    depends_on:
+      - php
+    networks:
+      - web
+    volumes:
+      - ./config/production/nginx:/etc/nginx
+      - ./src:/var/www/html
+    labels:
+      - traefik.enable=true
+
+  php:
+    container_name: php
+    build: ./images/php-fpm
+    restart: always
+    user: $PUID:$PGID # allows upgrading WP and plugins
+    networks:
+      - web
+    extra_hosts:
+      - "$HOSTNAME:$TRAEFIK_STATIC_IP"
+    environment:
+      ENV: $ENV
+      DEBUG: $DEBUG
+      DB_NAME: $DB_NAME
+      DB_PASS: $DB_PASS
+    volumes:
+      - ./config/production/php:/usr/local/etc/php
+      - ./src:/var/www/html
+
+  db:
+    image: mariadb:latest
+    container_name: db
+    restart: always
+    networks:
+      - web
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - '3306:3306'
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: $DB_NAME
+      MYSQL_ROOT_PASSWORD: $DB_PASS
+
+volumes:
+  db-data:
+
+networks:
+  web:
+    external:
+      name: web
+  default:
+    driver: bridge

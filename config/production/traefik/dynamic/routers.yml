@@ -11,20 +11,14 @@ http:
       tls: {}
 
     nginx:
-      rule: 'Host(`community.bountiful.land`)'
+      rule: 'PathPrefix(`/community`)'
       entryPoints:
         - https
       middlewares:
-        - middleware-redirect-www
+        - middleware-strip-prefix
         - chain-no-auth@file
       service: nginx-svc
-      tls:
-        certResolver: lets-encrypt
-        options: tls-options
-        domains:
-          - main: 'bountiful.land'
-            sans:
-              - '*.bountiful.land'
+      tls: {}
 
   services:
     nginx-svc:

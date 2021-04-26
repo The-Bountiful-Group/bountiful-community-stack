@@ -15,10 +15,11 @@ http:
               - '*.bountiful.land'
 
     nginx:
-      rule: 'Host(`dev.bountiful.land`)'
+      rule: 'PathPrefix(`/community`)'
       entryPoints:
         - https
       middlewares:
+        - middleware-strip-prefix
         - chain-no-auth@file
       service: nginx-svc
       tls: {}

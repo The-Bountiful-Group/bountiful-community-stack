@@ -4,7 +4,7 @@
 node_modules
 
 logs/
-services/config/production/traefik/certs
+config/production/traefik/certs
 /docker-compose.override.yml
 
 # WordPress stuff

@@ -13,6 +13,7 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 	$_SERVER['HTTPS'] = 'on';
 }
 
+$_SERVER['REQUEST_URI'] = '/community' . $_SERVER['REQUEST_URI'];
 
 /**#@+
  * Authentication Unique Keys and Salts.

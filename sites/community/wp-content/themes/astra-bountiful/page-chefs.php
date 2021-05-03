@@ -33,19 +33,28 @@ get_header(); ?>
 	<?php astra_content_page_loop(); ?>
 
 	<?php $orig_query = $wp_query; ?>
-	<?php query_posts('posts_per_page=' . get_option('posts_per_page')); ?>
+	<?php query_posts('post_type=chef&posts_per_page=' . get_option('posts_per_page')); ?>
 
-	<div class="site-main">
+	<div class="site-main chef-list">
+		<?php if (have_posts()) : ?>
+			<?php while (have_posts()) : ?>
+				<?php the_post(); ?>
+
+				<article class="chef">
+					<header class="entry-header">
+						<a href="<?php the_permalink(); ?>" rel="bookmark">
+							<?php the_post_thumbnail([245, 163]); ?>
+							<h2 class="entry-title">
+								<?php the_title(); ?>
+							</h2>
+						</a>
+					</header>
+					<!-- <div class="entry-content clear">
+						<?php the_excerpt(); ?>
+					</div> -->
+				</article>
 		<?php
-		if (have_posts()) :
-			do_action('astra_template_parts_content_top');
-
-			while (have_posts()) {
-				the_post();
-				do_action('astra_template_parts_content');
-			}
-
-			do_action('astra_template_parts_content_bottom');
+			endwhile;
 		else :
 			do_action('astra_template_parts_content_none');
 		endif;

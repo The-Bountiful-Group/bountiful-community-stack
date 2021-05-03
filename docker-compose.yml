@@ -33,7 +33,7 @@ services:
       - web
     volumes:
       - ./config/production/nginx:/etc/nginx
-      - ./src:/var/www/html
+      - ./sites:/var/www/html
     labels:
       - traefik.enable=true
 
@@ -53,7 +53,7 @@ services:
       DB_PASS: $DB_PASS
     volumes:
       - ./config/production/php:/usr/local/etc/php
-      - ./src:/var/www/html
+      - ./sites:/var/www/html
 
   db:
     image: mariadb:latest

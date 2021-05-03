@@ -8,15 +8,14 @@ config/production/traefik/certs
 /docker-compose.override.yml
 
 # WordPress stuff
-src/*
-!src/tools/
-!src/wp-config.php
-!src/wp-content/
+sites/community/*
+!sites/community/wp-config.php
+!sites/community/wp-content/
 
 # Ignore everything in the "wp-content" except...
-src/wp-content/*
-!src/wp-content/themes/
+sites/community/wp-content/*
+!sites/community/wp-content/themes/
 
 # Ignore everything in the "themes", except...
-src/wp-content/themes/*
-!src/wp-content/themes/astra-bountiful
+sites/community/wp-content/themes/*
+!sites/community/wp-content/themes/astra-bountiful

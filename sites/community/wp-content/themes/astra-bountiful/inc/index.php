@@ -2,10 +2,12 @@
 
 if (!defined('ABSPATH')) exit;
 
-// require_once('something.php');
+require_once('astra-override.php');
+require_once('blog.php');
 
 add_action('init', function () {
 	new Bountiful();
+	new Bountiful_Blog();
 });
 
 class Bountiful
@@ -20,13 +22,18 @@ class Bountiful
 		// remove post navigation
 		remove_action('astra_entry_after', 'astra_single_post_navigation_markup');
 
-		// display author bio section
-		add_action('astra_template_parts_content', [$this, 'add_author_bio'], 14);
+		// override date/time display to show 'time ago'
+		add_filter('get_the_date', [$this, 'convert_to_time_ago'], 10, 1);
+		add_filter('the_date', [$this, 'convert_to_time_ago'], 10, 1);
+		add_filter('get_the_time', [$this, 'convert_to_time_ago'], 10, 1);
+		add_filter('the_time', [$this, 'convert_to_time_ago'], 10, 1);
 	}
 
-	public function add_author_bio()
+	public function convert_to_time_ago($orig_time)
 	{
-		if (function_exists('wpsabox_author_box')) echo wpsabox_author_box();
+		global $post;
+		$orig_time = strtotime($post->post_date);
+		return human_time_diff($orig_time, current_time('timestamp')) . ' ' . __('ago');
 	}
 
 	public function wp_head()
